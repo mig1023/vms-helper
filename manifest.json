@@ -3,15 +3,18 @@
 	"name": "VMS helper",
 	"description": "vms --> schengen export",
 	"version": "1.0",
-	"permissions": [
+	"permissions":
+	[
 		"activeTab",
 		"storage",
 		"tabs"
 	],
-	"action": {
+	"action":
+	{
 		"default_icon": "icon.png"
 	},
-	"content_scripts": [
+	"content_scripts":
+	[
 		{
 			"matches": ["*://test.com/Outsourcing/ewafuxp/alphanumeric*"],
 			"js": ["esteri-side.js"]
@@ -25,11 +28,13 @@
 			"js": ["vms-side.js"]
 		}
 	],
-	"background": {
+	"background":
+	{
 		"service_worker": "background.js",
 		"type": "module"
 	},
-	"host_permissions": [
+	"host_permissions":
+	[
 		"*://*.test.com/"
 	]
 }
