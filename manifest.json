@@ -1,0 +1,35 @@
+{
+	"manifest_version": 3,
+	"name": "VMS helper",
+	"description": "vms --> schengen export",
+	"version": "1.0",
+	"permissions": [
+		"activeTab",
+		"storage",
+		"tabs"
+	],
+	"action": {
+		"default_icon": "icon.png"
+	},
+	"content_scripts": [
+		{
+			"matches": ["*://test.com/Outsourcing/ewafuxp/alphanumeric*"],
+			"js": ["esteri-side.js"]
+		},
+		{
+			"matches": ["*://test.com/Outsourcing/ewafuxp/image*"],
+			"js": ["esteri-redirect.js"]
+		},
+		{
+			"matches": ["*://test.com/individuals/doc_info*"],
+			"js": ["vms-side.js"]
+		}
+	],
+	"background": {
+		"service_worker": "background.js",
+		"type": "module"
+	},
+	"host_permissions": [
+		"*://*.test.com/"
+	]
+}
