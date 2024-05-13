@@ -27,6 +27,7 @@ function pushData()
 
 function pushCopypast(dataValue)
 {
+	var warnInfo = "";
 	var line = dataValue["esteri_data"];
 	
 	if ((line === "null") || (line === undefined))
@@ -35,20 +36,32 @@ function pushCopypast(dataValue)
 		return;
 	}
 	
-	var arr = line.split('|');
+	var jsonData = JSON.parse(line);
+		
+	if ((jsonData === "null") || (jsonData === undefined)) {
+		alert ("Ошибка парсинга JSON. Возможно, данные повреждены при переносе из системы VMS в плагин.");
+		return;
+	}
 	
 	var id = "ERR";
 
-	for (let n = 0; n < arr.length; n += 2)
-	{	
-		var element_id = arr[n];
-		var element_value = arr[n+1];
+	for (let i = 0; i < jsonData.length; i++) {
+		
+		var element_id = jsonData[i].field;
+		var element_value = jsonData[i].content;
 		
 		if (element_id == "ID")
 		{		
 			id = element_value;
 			continue;
 		}
+		else if (element_id == "PlaginInformation") {
+			
+				if (element_value != "")
+					warnInfo = "\n\n" + element_value;
+				
+				continue;
+			}
 		else if (element_id == "VisaTypeID")
 		{
 			var visto_tipologiaVisto=document.getElementById('visto-tipologiaVisto');
@@ -81,15 +94,15 @@ function pushCopypast(dataValue)
 			inputToInsert.value = element_value;
 	}
 	
-	return id;
+	return [id, warnInfo];
 }
 
-function makeHttpRequest(practica, appId)
+function makeHttpRequest(practica, appId, warnInfo)
 {
-	fetchResource('https://test.com/link_schengen.htm?practica='+practica+'&appid='+appId, practica, function() {});
+	fetchResource('https://test.com/link_schengen.htm?practica='+practica+'&appid='+appId, practica, warnInfo, function() {});
 }
 
-function fetchResource(input, practica, init)
+function fetchResource(input, practica, warnInfo, init)
 {
 	return new Promise((resolve, reject) =>
 	{
@@ -99,11 +112,12 @@ function fetchResource(input, practica, init)
 			
 			if (response === null)
 			{
+				alert ("Ошибка привязки практики к системе.");
 				reject(error);
 			}
 			else
 			{
-				alert("Плагин отработал\nПрактика " + practica);
+				alert("Плагин отработал\nПрактика " + practica + warnInfo);
 				
 				const body = response.body ? new Blob([response.body]) : undefined;
 				
